@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/black_figures/Elephant.png</file>
+        <file>img/black_figures/Horse.png</file>
+        <file>img/black_figures/King.png</file>
+        <file>img/black_figures/Pawn.png</file>
+        <file>img/black_figures/Queen.png</file>
+        <file>img/black_figures/Rook.png</file>
+        <file>img/main/background.jpg</file>
+        <file>img/white_figures/Elephant.png</file>
+        <file>img/white_figures/Horse.png</file>
+        <file>img/white_figures/King.png</file>
+        <file>img/white_figures/Pawn.png</file>
+        <file>img/white_figures/Queen.png</file>
+        <file>img/white_figures/Rook.png</file>
+        <file>img/main/BlackCell.png</file>
+        <file>img/main/FrameBoard.png</file>
+        <file>img/main/WhiteCell.png</file>
+    </qresource>
+</RCC>
