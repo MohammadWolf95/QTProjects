@@ -22,6 +22,3 @@
 
 
 #endif // DEFINES_H
-
-
-////sdfsdfsdfsdaf
