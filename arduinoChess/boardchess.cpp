@@ -13,7 +13,8 @@ BoardChessBase::~BoardChessBase()
 }
 
 const QMap<QPair<char, char>, QPointF>  BoardChessBase::mapCoordinates =
-{   {{'a','1'},QPointF(0,  350)}, {{'a','2'},QPointF(0,  300)}, {{'a','3'},QPointF(0,  250)}, {{'a','4'},QPointF(0,  200)}, {{'a','5'},QPointF(0,  150)}, {{'a','6'},QPointF(0,  100)}, {{'a','7'},QPointF(0,  50)}, {{'a','8'},QPointF(0,  0)},
+{
+    {{'a','1'},QPointF(0,  350)}, {{'a','2'},QPointF(0,  300)}, {{'a','3'},QPointF(0,  250)}, {{'a','4'},QPointF(0,  200)}, {{'a','5'},QPointF(0,  150)}, {{'a','6'},QPointF(0,  100)}, {{'a','7'},QPointF(0,  50)}, {{'a','8'},QPointF(0,  0)},
     {{'b','1'},QPointF(50, 350)}, {{'b','2'},QPointF(50, 300)}, {{'b','3'},QPointF(50, 250)}, {{'b','4'},QPointF(50, 200)}, {{'b','5'},QPointF(50, 150)}, {{'b','6'},QPointF(50, 100)}, {{'b','7'},QPointF(50, 50)}, {{'b','8'},QPointF(50, 0)},
     {{'c','1'},QPointF(100,350)}, {{'c','2'},QPointF(100,300)}, {{'c','3'},QPointF(100,250)}, {{'c','4'},QPointF(100,200)}, {{'c','5'},QPointF(100,150)}, {{'c','6'},QPointF(100,100)}, {{'c','7'},QPointF(100,50)}, {{'c','8'},QPointF(100,0)},
     {{'d','1'},QPointF(150,350)}, {{'d','2'},QPointF(150,300)}, {{'d','3'},QPointF(150,250)}, {{'d','4'},QPointF(150,200)}, {{'d','5'},QPointF(150,150)}, {{'d','6'},QPointF(150,100)}, {{'d','7'},QPointF(150,50)}, {{'d','8'},QPointF(150,0)},

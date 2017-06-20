@@ -22,5 +22,3 @@
 
 
 #endif // DEFINES_H
-
-//hello
