@@ -54,10 +54,13 @@ private:
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QGraphicsSceneDragDropEvent *event) Q_DECL_OVERRIDE;
-
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget = 0) Q_DECL_OVERRIDE;
+               QWidget *widget = 0) Q_DECL_OVERRIDE; 
+    const QRect targetSquare() const;
+    int cellSize() const;
+
+    QRect highlightedRect;
 };
 
 class BoardChessFrame: public BoardChessBase

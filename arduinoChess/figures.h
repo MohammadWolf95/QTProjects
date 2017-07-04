@@ -11,6 +11,9 @@ class FigureBase: public QGraphicsObject{
 public:
     FigureBase(QGraphicsItem*parent=0);
     virtual ~FigureBase();
+    bool getColor(){
+        return color;
+    }
 
 protected:
     QPixmap pixmap;
@@ -18,6 +21,7 @@ protected:
     QString name;
 
     QRectF boundingRect() const Q_DECL_OVERRIDE;
+    void writePosInByte(const char&x, const char&y);
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -38,7 +42,6 @@ public:
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
-    //void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };
 
 class King : public FigureBase
@@ -49,6 +52,9 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+
+private:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };
 
 class Queen : public FigureBase
@@ -101,7 +107,7 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
-
+    static QString chessMimeType() { return QStringLiteral("figures/x-chess"); }
     //QVector<FigureBase*> getVectorFig();
 private:
     //QVector<FigureBase*> vecFig;

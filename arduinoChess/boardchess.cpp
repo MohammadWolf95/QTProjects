@@ -1,6 +1,7 @@
 #include "boardchess.h"
 #include <QtWidgets>
 #include "defines.h"
+#include "game.h"
 
 //BoardChessBase
 BoardChessBase::BoardChessBase(QGraphicsItem*parent)
@@ -13,8 +14,7 @@ BoardChessBase::~BoardChessBase()
 }
 
 const QMap<QPair<char, char>, QPointF>  BoardChessBase::mapCoordinates =
-{
-    {{'a','1'},QPointF(0,  350)}, {{'a','2'},QPointF(0,  300)}, {{'a','3'},QPointF(0,  250)}, {{'a','4'},QPointF(0,  200)}, {{'a','5'},QPointF(0,  150)}, {{'a','6'},QPointF(0,  100)}, {{'a','7'},QPointF(0,  50)}, {{'a','8'},QPointF(0,  0)},
+{   {{'a','1'},QPointF(0,  350)}, {{'a','2'},QPointF(0,  300)}, {{'a','3'},QPointF(0,  250)}, {{'a','4'},QPointF(0,  200)}, {{'a','5'},QPointF(0,  150)}, {{'a','6'},QPointF(0,  100)}, {{'a','7'},QPointF(0,  50)}, {{'a','8'},QPointF(0,  0)},
     {{'b','1'},QPointF(50, 350)}, {{'b','2'},QPointF(50, 300)}, {{'b','3'},QPointF(50, 250)}, {{'b','4'},QPointF(50, 200)}, {{'b','5'},QPointF(50, 150)}, {{'b','6'},QPointF(50, 100)}, {{'b','7'},QPointF(50, 50)}, {{'b','8'},QPointF(50, 0)},
     {{'c','1'},QPointF(100,350)}, {{'c','2'},QPointF(100,300)}, {{'c','3'},QPointF(100,250)}, {{'c','4'},QPointF(100,200)}, {{'c','5'},QPointF(100,150)}, {{'c','6'},QPointF(100,100)}, {{'c','7'},QPointF(100,50)}, {{'c','8'},QPointF(100,0)},
     {{'d','1'},QPointF(150,350)}, {{'d','2'},QPointF(150,300)}, {{'d','3'},QPointF(150,250)}, {{'d','4'},QPointF(150,200)}, {{'d','5'},QPointF(150,150)}, {{'d','6'},QPointF(150,100)}, {{'d','7'},QPointF(150,50)}, {{'d','8'},QPointF(150,0)},
@@ -69,6 +69,7 @@ BoardChessCell::BoardChessCell(const QPair<char, char> id, QGraphicsItem*parent)
     //и устанавливает координат этого элемента. Координат клетки обозначается как id.
     //id.first - это значение строки, которое может обозначаться от 1-8;
     //id.second - это значение столбика, которое может обозначаться от a-h
+    setAcceptDrops(true);
     try {
         if((id.first<'1'||id.first>'8')||
           (id.second<'a'||id.second>'h')){
@@ -87,25 +88,63 @@ QPair<char, char> BoardChessCell::getId(){
 }
 
 void BoardChessCell::dragEnterEvent(QGraphicsSceneDragDropEvent *event){
-    /*if (event->mimeData()->hasImage()) {
-        event->setAccepted(true);
-        dragOver = true;
-        update();
-    } else {
-        RobotPart::dragEnterEvent(event);
-    }*/
+    Q_UNUSED(event);
 }
 
 void BoardChessCell::dragLeaveEvent(QGraphicsSceneDragDropEvent *event){
-
+    QRect updateRect = highlightedRect;
+    highlightedRect = QRect();
+    update(updateRect);
+    event->accept();
 }
 
 void BoardChessCell::dragMoveEvent(QGraphicsSceneDragDropEvent *event){
+    QRect updateRect = highlightedRect.united(targetSquare());
 
+    if (pressed) {
+        highlightedRect = targetSquare();
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    } else {
+        highlightedRect = QRect();
+        event->ignore();
+    }
+    update(updateRect);
 }
 
 void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
+    QList<QGraphicsItem*> items = collidingItems();
 
+    QPair<char, char> key(idCoordinate.second, idCoordinate.first);
+    char coordinateMoves[3] = {idCoordinate.second, idCoordinate.first};
+    QByteArray &byte = Game::getInstance()->byte;
+    byte.append(coordinateMoves);
+
+    //это условие проверяет есть жертва или нет
+    if(!items.isEmpty()){
+        //в данном случае есть жертва
+        FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
+        byte.append((char)figure->getColor()+'0');
+        byte.append('\n');
+        delete items.at(0);
+    }
+    else{
+        byte.append('\n');
+    }
+
+    QPointF position = BoardChessBase::mapCoordinates.find(key).value();
+    FigureBase*figure = Game::getInstance()->getFigureMoved();
+    figure->setPos(position);
+    Pawn *pawn = dynamic_cast<Pawn *>(figure);
+    if(pawn){
+        pawn->firstStep=true;
+    }
+
+    Game::getInstance()->serial.write(byte);
+
+    Game::getInstance()->reDrawing();
+    highlightedRect = QRect();
+    update();
 }
 
 QRectF BoardChessCell::boundingRect() const{
@@ -130,6 +169,22 @@ void BoardChessCell::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         painter->setOpacity(0.5);
         painter->drawRect(QRect(5, 5, 40, 40));
     }
+    if(highlightedRect.isValid()){
+        painter->setBrush(QBrush(Qt::blue));
+        painter->setOpacity(0.5);
+        painter->setPen(Qt::NoPen);
+        painter->drawRect(highlightedRect.adjusted(0, 0, -1, -1));
+    }
+}
+
+const QRect BoardChessCell::targetSquare() const
+{
+    return QRect(0, 0, cellSize(), cellSize());
+}
+
+int BoardChessCell::cellSize() const
+{
+    return SIZE_CELL;
 }
 
 //BoardChessCell

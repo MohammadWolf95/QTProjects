@@ -16,6 +16,16 @@ QRectF FigureBase::boundingRect() const{
     return QRectF(5, 5, 40, 40);
 }
 
+void FigureBase::writePosInByte(const char&x, const char&y){
+    //Эта функция записывает координаты
+    //местоположения фигуры в переменную
+    //byte класса game
+    QByteArray &byte = Game::getInstance()->byte;
+    byte.clear();
+    byte.append(x);
+    byte.append(y);
+}
+
 void FigureBase::mousePressEvent(QGraphicsSceneMouseEvent *event){
     Q_UNUSED(event);
     setCursor(Qt::ClosedHandCursor);
@@ -26,6 +36,8 @@ void FigureBase::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         .length() < QApplication::startDragDistance()) {
         return;
     }
+    Game::getInstance()->setFigureMoved(this);
+
     QDrag *drag = new QDrag(event->widget());
     QMimeData *mime = new QMimeData;
 
@@ -73,31 +85,56 @@ void Pawn::paint(QPainter *painter,
 void Pawn::mousePressEvent(QGraphicsSceneMouseEvent *event){
     setCursor(Qt::ClosedHandCursor);
     auto game = Game::getInstance();
+    game->reDrawing();
+
     QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
     char x = charCoordinate.first;
     char y = charCoordinate.second;
-    if(!firstStep){
-        auto mapCells = game->getMapCell();
-        QVector<BoardChessCell*>vec;
-        for(int i=1;i<3;i++){
-            color?(++y) :(--y);
-            auto cell = mapCells.find(qMakePair(y,x)).value();
-            cell->pressed = true;
-            cell->update();
-            vec.push_back(cell);
+
+    writePosInByte(x,y);
+
+    char yStep = y;
+    char xKillDiagonal[]={x-1, x+1};    //координаты жертв для текущей пешки по x
+    int imax=1;
+    auto mapCells = game->getMapCell();
+    QVector<BoardChessCell*>vec;
+
+    firstStep?(imax=1):(imax=2);//проверка первого хода.
+                                //Если это первый ход, то есть возможность пешке
+                                //пойти на два хода вперед
+
+    //подсветка возможности хода для пешки
+    for(int i=0;i<imax;i++){
+        color?(++yStep) :(--yStep);
+        auto cell = mapCells.find(qMakePair(yStep,x)).value();
+        if(!(cell->collidingItems().isEmpty())){
+            break;
         }
-        game->setVector(vec);
+        cell->pressed = true;
+        cell->update();
+        vec.push_back(cell);
     }
-    else{
 
+    //подсветка возможности убийства для пешки
+    yStep = y;
+    color?(++yStep) :(--yStep);
+    for(int i=0;i<2;i++){
+        if((yStep>='1' && yStep<='8') &&
+                (xKillDiagonal[i]>='a' && xKillDiagonal[i]<='h')){
+            auto cell = mapCells.find(qMakePair(yStep,xKillDiagonal[i])).value();
+            QList<QGraphicsItem*> items = cell->collidingItems();
+            if(!(items.isEmpty())){
+                FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
+                if(figure->getColor()!=color){
+                    cell->pressed = true;
+                    cell->update();
+                    vec.push_back(cell);
+                }
+            }
+        }
     }
+    game->setVector(vec);
 }
-
-/*void Pawn::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    setCursor(Qt::OpenHandCursor);
-    auto game = Game::getInstance();
-    game->reDrawing();
-}*/
 
 /*-----------------------------*/
 
@@ -123,6 +160,30 @@ void King::paint(QPainter *painter,
           pixmap.load(":/img/black_figures/King.png");
 
     painter->drawPixmap(QPointF(0,0),pixmap);
+}
+
+void King::mousePressEvent(QGraphicsSceneMouseEvent *event){
+    setCursor(Qt::ClosedHandCursor);
+    auto game = Game::getInstance();
+    game->reDrawing();
+
+    QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
+    char x = charCoordinate.first;
+    char y = charCoordinate.second;
+
+    writePosInByte(x,y);
+
+    char yStepKill = y-1, xStepKill = x-1;
+
+    //подсветка возможности хода и убийства для короля
+    for(yStepKill;yStepKill<=(y+1);yStepKill++){
+        for(xStepKill;xStepKill<=(x+1);xStepKill++){
+            if((yStepKill>='1' && yStepKill<='8') &&
+                    (xStepKill>='a' && xStepKill<='h')){
+
+            }
+        }
+    }
 }
 
 /*-----------------------------*/
@@ -272,7 +333,6 @@ Figures::Figures(const bool &color, QGraphicsItem *parent)
     }
 
     for(int i=0; i<8; i++){
-        static char x='h';
         FigureBase*pawn=new Pawn(color, this);
         pawn->setPos(BoardChessBase::mapCoordinates.find({xPawn++, yPawn})->toPoint());
         //vecFig.push_back(pawn);
