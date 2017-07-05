@@ -183,7 +183,7 @@ void King::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
             }
         }
-    }
+    }//привет
 }
 
 /*-----------------------------*/
