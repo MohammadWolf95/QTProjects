@@ -56,6 +56,23 @@ void FigureBase::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     game->reDrawing();*/
 }
 
+bool FigureBase::calcStepsForQER(BoardChessCell*cell, QVector<BoardChessCell*>&vec){
+    //Эта функция высвечивает возможные ходы и убийства для таких фигур,
+    //как Queen, Elephant, Rook
+    QList<QGraphicsItem*> items = cell->collidingItems();
+    if(!(items.isEmpty())){
+        FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
+        if(figure->getColor()!=color){
+            vec.push_back(cell);
+        }
+        return true;
+    }
+    else{
+        vec.push_back(cell);
+        return false;
+    }
+}
+
 /*-----------------------------*/
 
 /*Определения для класса Pawn*/
@@ -103,7 +120,7 @@ void Pawn::mousePressEvent(QGraphicsSceneMouseEvent *event){
                                 //Если это первый ход, то есть возможность пешке
                                 //пойти на два хода вперед
 
-    //подсветка возможности хода для пешки
+    //алгоритм нахождения ходов для пешки
     for(int i=0;i<imax;i++){
         color?(++yStep) :(--yStep);
         auto cell = mapCells.find(qMakePair(yStep,x)).value();
@@ -113,7 +130,7 @@ void Pawn::mousePressEvent(QGraphicsSceneMouseEvent *event){
         vec.push_back(cell);
     }
 
-    //подсветка возможности убийства для пешки
+    //алгоритм нахождения убийств для пешки
     yStep = y;
     color?(++yStep) :(--yStep);
     for(int i=0;i<2;i++){
@@ -170,8 +187,8 @@ void King::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
     writePosInByte(x,y);
 
-    //подсветка возможности хода и убийства для короля
-    QVector <QPair<char, char>>vecSteps;
+    //алгоритм для нахождения ходов и убийств для короля
+    QVector <QPair<char, char>>vecKillSteps;
     char yStepKill = y-1;
     auto mapCells = game->getMapCell();
     for(yStepKill;yStepKill<=(y+1);++yStepKill){
@@ -179,23 +196,13 @@ void King::mousePressEvent(QGraphicsSceneMouseEvent *event){
         for(xStepKill;xStepKill<=(x+1);++xStepKill){
             if((yStepKill>='1' && yStepKill<='8') &&
                     (xStepKill>='a' && xStepKill<='h')){
-                vecSteps.append({yStepKill,xStepKill});
+                vecKillSteps.append({yStepKill,xStepKill});
             }
         }
     }
-    vecSteps.removeOne(qMakePair(y,x));
-    for(auto i:vecSteps){
+    vecKillSteps.removeOne(qMakePair(y,x));
+    for(auto i:vecKillSteps){
         auto cell = mapCells.find(i).value();
-        QList<QGraphicsItem*> items = cell->collidingItems();
-            if(!(items.isEmpty())){
-                FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
-                if(figure->getColor()!=color){
-                    vec.push_back(cell);
-                }
-            }
-            else{
-                vec.push_back(cell);
-            }
     }
     game->setVector(vec);
 }
@@ -226,6 +233,91 @@ void Queen::paint(QPainter *painter,
     painter->drawPixmap(QPointF(0,0),pixmap);
 }
 
+void Queen::mousePressEvent(QGraphicsSceneMouseEvent *event){
+    setCursor(Qt::ClosedHandCursor);
+    auto game = Game::getInstance();
+    game->reDrawing();
+
+    QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
+    char x = charCoordinate.first;
+    char y = charCoordinate.second;
+    QVector<BoardChessCell*>vec;
+
+    writePosInByte(x,y);
+
+    //алгоритм для нахождения ходов и убийств для короля
+    char yStepKill, xStepKill;
+    auto mapCells = game->getMapCell();
+    yStepKill=y+1;
+    xStepKill=x;
+    for(yStepKill;yStepKill<='8';++yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y-1;
+    xStepKill=x;
+    for(yStepKill;yStepKill>='1';--yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y;
+    xStepKill=x+1;
+    for(xStepKill;xStepKill<='h';++xStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y;
+    xStepKill=x-1;
+    for(xStepKill;xStepKill>='a';--xStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y-1;
+    xStepKill=x-1;
+    for(xStepKill,yStepKill;(xStepKill>='a' && yStepKill>='1');--xStepKill, --yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y+1;
+    xStepKill=x+1;
+    for(xStepKill,yStepKill;(xStepKill<='h' && yStepKill<='8');++xStepKill, ++yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y+1;
+    xStepKill=x-1;
+    for(xStepKill,yStepKill;(xStepKill>='a' && yStepKill<='8');--xStepKill, ++yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y-1;
+    xStepKill=x+1;
+    for(xStepKill,yStepKill;(xStepKill<='h' && yStepKill>='1');++xStepKill, --yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+    /*while((yStepKill>='1' && yStepKill<='8') &&
+          (xStepKill>='a' && xStepKill<='h')){
+
+    }*/
+    game->setVector(vec);
+}
+
 /*-----------------------------*/
 
 /*Определения для класса Elephant*/
@@ -250,6 +342,56 @@ void Elephant::paint(QPainter *painter,
           pixmap.load(":/img/black_figures/Elephant.png");
 
     painter->drawPixmap(QPointF(0,0),pixmap);
+}
+
+void Elephant::mousePressEvent(QGraphicsSceneMouseEvent *event){
+    setCursor(Qt::ClosedHandCursor);
+    auto game = Game::getInstance();
+    game->reDrawing();
+
+    QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
+    char x = charCoordinate.first;
+    char y = charCoordinate.second;
+    QVector<BoardChessCell*>vec;
+
+    writePosInByte(x,y);
+
+    //алгоритм для нахождения ходов и убийств для короля
+    char yStepKill, xStepKill;
+    auto mapCells = game->getMapCell();
+
+    yStepKill=y-1;
+    xStepKill=x-1;
+    for(xStepKill,yStepKill;(xStepKill>='a' && yStepKill>='1');--xStepKill, --yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y+1;
+    xStepKill=x+1;
+    for(xStepKill,yStepKill;(xStepKill<='h' && yStepKill<='8');++xStepKill, ++yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y+1;
+    xStepKill=x-1;
+    for(xStepKill,yStepKill;(xStepKill>='a' && yStepKill<='8');--xStepKill, ++yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y-1;
+    xStepKill=x+1;
+    for(xStepKill,yStepKill;(xStepKill<='h' && yStepKill>='1');++xStepKill, --yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+    game->setVector(vec);
 }
 
 /*-----------------------------*/
@@ -302,6 +444,55 @@ void Rook::paint(QPainter *painter,
           pixmap.load(":/img/black_figures/Rook.png");
 
     painter->drawPixmap(QPointF(0,0),pixmap);
+}
+
+void Rook::mousePressEvent(QGraphicsSceneMouseEvent *event){
+    setCursor(Qt::ClosedHandCursor);
+    auto game = Game::getInstance();
+    game->reDrawing();
+
+    QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
+    char x = charCoordinate.first;
+    char y = charCoordinate.second;
+    QVector<BoardChessCell*>vec;
+
+    writePosInByte(x,y);
+
+    //алгоритм для нахождения ходов и убийств для короля
+    char yStepKill, xStepKill;
+    auto mapCells = game->getMapCell();
+    yStepKill=y+1;
+    xStepKill=x;
+    for(yStepKill;yStepKill<='8';++yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y-1;
+    xStepKill=x;
+    for(yStepKill;yStepKill>='1';--yStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y;
+    xStepKill=x+1;
+    for(xStepKill;xStepKill<='h';++xStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+
+    yStepKill=y;
+    xStepKill=x-1;
+    for(xStepKill;xStepKill>='a';--xStepKill){
+        auto cell = mapCells.find(qMakePair(yStepKill,xStepKill)).value();
+        if(calcStepsForQER(cell, vec))
+            break;
+    }
+     game->setVector(vec);
 }
 
 /*-----------------------------*/

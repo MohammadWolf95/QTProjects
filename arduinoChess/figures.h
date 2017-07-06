@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QGraphicsObject>
+#include "boardchess.h"
 
 QT_FORWARD_DECLARE_CLASS(QPixmap)
 
@@ -22,6 +23,7 @@ protected:
 
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void writePosInByte(const char&x, const char&y);
+    bool calcStepsForQER(BoardChessCell*cell, QVector<BoardChessCell*>&vec);
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -65,6 +67,8 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+private:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };
 
 class Elephant : public FigureBase
@@ -75,6 +79,8 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+private:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };
 
 class Horse : public FigureBase
@@ -95,7 +101,8 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
-
+private:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };
 
 class Figures: public FigureBase
