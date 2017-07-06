@@ -26,6 +26,18 @@ void FigureBase::writePosInByte(const char&x, const char&y){
     byte.append(y);
 }
 
+void FigureBase::lightKill(BoardChessCell*cell, QVector<BoardChessCell*>&vec){
+    QList<QGraphicsItem*> items = cell->collidingItems();
+    if(!(items.isEmpty())){
+        FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
+        if(figure->getColor()!=color){
+            cell->pressed = true;
+            cell->update();
+            vec.push_back(cell);
+        }
+    }
+}
+
 void FigureBase::mousePressEvent(QGraphicsSceneMouseEvent *event){
     Q_UNUSED(event);
     setCursor(Qt::ClosedHandCursor);
@@ -122,15 +134,7 @@ void Pawn::mousePressEvent(QGraphicsSceneMouseEvent *event){
         if((yStep>='1' && yStep<='8') &&
                 (xKillDiagonal[i]>='a' && xKillDiagonal[i]<='h')){
             auto cell = mapCells.find(qMakePair(yStep,xKillDiagonal[i])).value();
-            QList<QGraphicsItem*> items = cell->collidingItems();
-            if(!(items.isEmpty())){
-                FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
-                if(figure->getColor()!=color){
-                    cell->pressed = true;
-                    cell->update();
-                    vec.push_back(cell);
-                }
-            }
+            lightKill(cell,vec);
         }
     }
     game->setVector(vec);
@@ -170,20 +174,35 @@ void King::mousePressEvent(QGraphicsSceneMouseEvent *event){
     QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
     char x = charCoordinate.first;
     char y = charCoordinate.second;
+    QVector<BoardChessCell*>vec;
 
     writePosInByte(x,y);
 
+    //подсветка возможности хода и убийства для короля
     char yStepKill = y-1, xStepKill = x-1;
 
-    //подсветка возможности хода и убийства для короля
-    for(yStepKill;yStepKill<=(y+1);yStepKill++){
-        for(xStepKill;xStepKill<=(x+1);xStepKill++){
+    QList <QPair<char, char>>list;
+    auto mapCells = game->getMapCell();
+    QPair<char, char> a{'1', '1'};
+    list.append(a);
+    list.append({yStepKill+2,xStepKill+1});
+    for(yStepKill;yStepKill<=(y+1);++yStepKill){
+        for(xStepKill;xStepKill<=(x+1);xStepKill+=2){
             if((yStepKill>='1' && yStepKill<='8') &&
                     (xStepKill>='a' && xStepKill<='h')){
-
+                list.append({yStepKill,xStepKill});
             }
         }
-    }//привет
+    }
+    for(auto i:list){
+        /*auto cell = mapCells.find(i).value();
+        QList<QGraphicsItem*> items = cell->collidingItems();
+        lightKill(cell,vec);*/
+    }
+}
+
+void King::lightSteps(char &y, char &x){
+
 }
 
 /*-----------------------------*/

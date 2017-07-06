@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QGraphicsObject>
+#include "boardchess.h"
 
 QT_FORWARD_DECLARE_CLASS(QPixmap)
 
@@ -22,6 +23,7 @@ protected:
 
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void writePosInByte(const char&x, const char&y);
+    void lightKill(BoardChessCell*cell, QVector<BoardChessCell*>&vec);
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -55,6 +57,7 @@ public:
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void lightSteps(char &y, char &x);
 };
 
 class Queen : public FigureBase
