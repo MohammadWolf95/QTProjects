@@ -23,7 +23,7 @@ protected:
 
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void writePosInByte(const char&x, const char&y);
-    void lightKill(BoardChessCell*cell, QVector<BoardChessCell*>&vec);
+    void lightKillSteps(BoardChessCell*cell, QVector<BoardChessCell*>&vec);
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -44,6 +44,7 @@ public:
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void lightKill(BoardChessCell*cell, QVector<BoardChessCell*>&vec);
 };
 
 class King : public FigureBase

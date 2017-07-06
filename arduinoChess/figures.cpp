@@ -26,7 +26,7 @@ void FigureBase::writePosInByte(const char&x, const char&y){
     byte.append(y);
 }
 
-void FigureBase::lightKill(BoardChessCell*cell, QVector<BoardChessCell*>&vec){
+void FigureBase::lightKillSteps(BoardChessCell*cell, QVector<BoardChessCell*>&vec){
     QList<QGraphicsItem*> items = cell->collidingItems();
     if(!(items.isEmpty())){
         FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
@@ -35,6 +35,11 @@ void FigureBase::lightKill(BoardChessCell*cell, QVector<BoardChessCell*>&vec){
             cell->update();
             vec.push_back(cell);
         }
+    }
+    else{
+        cell->pressed = true;
+        cell->update();
+        vec.push_back(cell);
     }
 }
 
@@ -137,7 +142,19 @@ void Pawn::mousePressEvent(QGraphicsSceneMouseEvent *event){
             lightKill(cell,vec);
         }
     }
-    game->setVector(vec);
+    game->setVector(vec);   //Эта функция убирает все подсветки клеток после хода
+}
+
+void Pawn::lightKill(BoardChessCell*cell, QVector<BoardChessCell*>&vec){
+    QList<QGraphicsItem*> items = cell->collidingItems();
+    if(!(items.isEmpty())){
+        FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
+        if(figure->getColor()!=color){
+            cell->pressed = true;
+            cell->update();
+            vec.push_back(cell);
+        }
+    }
 }
 
 /*-----------------------------*/
@@ -179,26 +196,25 @@ void King::mousePressEvent(QGraphicsSceneMouseEvent *event){
     writePosInByte(x,y);
 
     //подсветка возможности хода и убийства для короля
-    char yStepKill = y-1, xStepKill = x-1;
+    char yStepKill = y-1;
 
-    QList <QPair<char, char>>list;
+    QVector <QPair<char, char>>vecSteps;
     auto mapCells = game->getMapCell();
-    QPair<char, char> a{'1', '1'};
-    list.append(a);
-    list.append({yStepKill+2,xStepKill+1});
     for(yStepKill;yStepKill<=(y+1);++yStepKill){
-        for(xStepKill;xStepKill<=(x+1);xStepKill+=2){
+        char xStepKill = x-1;
+        for(xStepKill;xStepKill<=(x+1);++xStepKill){
             if((yStepKill>='1' && yStepKill<='8') &&
                     (xStepKill>='a' && xStepKill<='h')){
-                list.append({yStepKill,xStepKill});
+                vecSteps.append({yStepKill,xStepKill});
             }
         }
     }
-    for(auto i:list){
-        /*auto cell = mapCells.find(i).value();
-        QList<QGraphicsItem*> items = cell->collidingItems();
-        lightKill(cell,vec);*/
+    vecSteps.removeOne(qMakePair(y,x));
+    for(auto i:vecSteps){
+        auto cell = mapCells.find(i).value();
+        lightKillSteps(cell,vec);
     }
+    game->setVector(vec);
 }
 
 void King::lightSteps(char &y, char &x){
