@@ -62,9 +62,14 @@ class Game:public QGraphicsItem
         /*
          * Эта функция сохраняет элементы
          * типа BoardChessCell*,
-         * в которых член pressed
-         * равен true
+         * и делает член pressed равным true, затем.
+         * После обновления у элементов член pressed
+         * становится равным false. После всех операций vector очищается
         */
+        for(auto &i:vec){
+            i->pressed = true;
+            i->update();
+        }
         vector=vec;
     }
 

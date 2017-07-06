@@ -26,23 +26,6 @@ void FigureBase::writePosInByte(const char&x, const char&y){
     byte.append(y);
 }
 
-void FigureBase::lightKillSteps(BoardChessCell*cell, QVector<BoardChessCell*>&vec){
-    QList<QGraphicsItem*> items = cell->collidingItems();
-    if(!(items.isEmpty())){
-        FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
-        if(figure->getColor()!=color){
-            cell->pressed = true;
-            cell->update();
-            vec.push_back(cell);
-        }
-    }
-    else{
-        cell->pressed = true;
-        cell->update();
-        vec.push_back(cell);
-    }
-}
-
 void FigureBase::mousePressEvent(QGraphicsSceneMouseEvent *event){
     Q_UNUSED(event);
     setCursor(Qt::ClosedHandCursor);
@@ -127,8 +110,6 @@ void Pawn::mousePressEvent(QGraphicsSceneMouseEvent *event){
         if(!(cell->collidingItems().isEmpty())){
             break;
         }
-        cell->pressed = true;
-        cell->update();
         vec.push_back(cell);
     }
 
@@ -139,22 +120,16 @@ void Pawn::mousePressEvent(QGraphicsSceneMouseEvent *event){
         if((yStep>='1' && yStep<='8') &&
                 (xKillDiagonal[i]>='a' && xKillDiagonal[i]<='h')){
             auto cell = mapCells.find(qMakePair(yStep,xKillDiagonal[i])).value();
-            lightKill(cell,vec);
+            QList<QGraphicsItem*> items = cell->collidingItems();
+            if(!(items.isEmpty())){
+                FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
+                if(figure->getColor()!=color){
+                    vec.push_back(cell);
+                }
+            }
         }
     }
-    game->setVector(vec);   //Эта функция убирает все подсветки клеток после хода
-}
-
-void Pawn::lightKill(BoardChessCell*cell, QVector<BoardChessCell*>&vec){
-    QList<QGraphicsItem*> items = cell->collidingItems();
-    if(!(items.isEmpty())){
-        FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
-        if(figure->getColor()!=color){
-            cell->pressed = true;
-            cell->update();
-            vec.push_back(cell);
-        }
-    }
+    game->setVector(vec);
 }
 
 /*-----------------------------*/
@@ -196,9 +171,8 @@ void King::mousePressEvent(QGraphicsSceneMouseEvent *event){
     writePosInByte(x,y);
 
     //подсветка возможности хода и убийства для короля
-    char yStepKill = y-1;
-
     QVector <QPair<char, char>>vecSteps;
+    char yStepKill = y-1;
     auto mapCells = game->getMapCell();
     for(yStepKill;yStepKill<=(y+1);++yStepKill){
         char xStepKill = x-1;
@@ -212,13 +186,18 @@ void King::mousePressEvent(QGraphicsSceneMouseEvent *event){
     vecSteps.removeOne(qMakePair(y,x));
     for(auto i:vecSteps){
         auto cell = mapCells.find(i).value();
-        lightKillSteps(cell,vec);
+        QList<QGraphicsItem*> items = cell->collidingItems();
+            if(!(items.isEmpty())){
+                FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
+                if(figure->getColor()!=color){
+                    vec.push_back(cell);
+                }
+            }
+            else{
+                vec.push_back(cell);
+            }
     }
     game->setVector(vec);
-}
-
-void King::lightSteps(char &y, char &x){
-
 }
 
 /*-----------------------------*/
