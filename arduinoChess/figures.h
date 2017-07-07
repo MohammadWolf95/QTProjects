@@ -15,6 +15,7 @@ public:
     bool getColor(){
         return color;
     }
+    bool firstStep;
 
 protected:
     QPixmap pixmap;
@@ -23,7 +24,7 @@ protected:
 
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void writePosInByte(const char&x, const char&y);
-    bool calcStepsForQER(BoardChessCell*cell, QVector<BoardChessCell*>&vec);
+    bool calcStepsForKQERH(BoardChessCell*cell, QVector<BoardChessCell*>&vec);
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -39,8 +40,6 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
-
-    bool firstStep;
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -91,6 +90,8 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+private:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };
 
 class Rook : public FigureBase
@@ -101,6 +102,7 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };

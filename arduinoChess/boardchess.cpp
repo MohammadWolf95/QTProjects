@@ -135,10 +135,7 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
     QPointF position = BoardChessBase::mapCoordinates.find(key).value();
     FigureBase*figure = Game::getInstance()->getFigureMoved();
     figure->setPos(position);
-    Pawn *pawn = dynamic_cast<Pawn *>(figure);
-    if(pawn){
-        pawn->firstStep=true;
-    }
+    figure->firstStep=true;
 
     Game::getInstance()->serial.write(byte);
 

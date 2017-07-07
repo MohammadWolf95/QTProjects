@@ -26,20 +26,7 @@ class Game:public QGraphicsItem
     QByteArray byte;
     QSerialPort serial;
 
-    static Game * getInstance();/* {
-        if(!p_instance){
-            p_instance = new Game();
-            QSerialPort &serialPort = p_instance->serial;
-            serialPort.setPortName("COM3");
-            serialPort.setBaudRate(QSerialPort::Baud9600);
-            serialPort.setDataBits(QSerialPort::Data8);
-            serialPort.setParity(QSerialPort::NoParity);
-            serialPort.setStopBits(QSerialPort::OneStop);
-            serialPort.setFlowControl(QSerialPort::NoFlowControl);
-            serialPort.open(QIODevice::ReadWrite);
-        }
-        return p_instance;
-    }*/
+    static Game * getInstance();
     QMap<QPair<char, char>,BoardChessCell*> &getMapCell(){
         return mapCell;
     }
