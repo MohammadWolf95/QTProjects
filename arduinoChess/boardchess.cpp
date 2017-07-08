@@ -136,6 +136,7 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
     FigureBase*figure = Game::getInstance()->getFigureMoved();
     figure->setPos(position);
     figure->firstStep=true;
+    figure->possibleSteps();
 
     Game::getInstance()->serial.write(byte);
 

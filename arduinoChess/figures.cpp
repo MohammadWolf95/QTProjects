@@ -73,6 +73,10 @@ bool FigureBase::calcStepsForKQERH(BoardChessCell*cell, QVector<BoardChessCell*>
     }
 }
 
+void FigureBase::possibleSteps(){
+
+}
+
 /*-----------------------------*/
 
 /*Определения для класса Pawn*/
@@ -149,6 +153,9 @@ void Pawn::mousePressEvent(QGraphicsSceneMouseEvent *event){
     game->setVector(vec);
 }
 
+void Pawn::possibleSteps(){
+
+}
 /*-----------------------------*/
 
 /*Определения для класса King*/

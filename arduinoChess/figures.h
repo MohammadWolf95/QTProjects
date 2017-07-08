@@ -15,16 +15,49 @@ public:
     bool getColor(){
         return color;
     }
+
     bool firstStep;
+
+    virtual void possibleSteps();   //функция для рассчета
+                                    //возможных ходов для фигур
 
 protected:
     QPixmap pixmap;
     bool color;
     QString name;
+    QVector<BoardChessCell*> vector;
 
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void writePosInByte(const char&x, const char&y);
     bool calcStepsForKQERH(BoardChessCell*cell, QVector<BoardChessCell*>&vec);
+    void reDrawing(){
+        /*
+         * Эта функция предназначена для перерисовки
+         * объектов типа BoardChessCell*,
+         * в которых член pressed равен true
+        */
+        if(!vector.size())
+            return;
+        for(auto v:vector){
+            v->pressed = false;
+            v->update();
+        }
+        vector.clear();
+    }
+    void setVector(QVector<BoardChessCell*> vec){
+        /*
+         * Эта функция сохраняет элементы
+         * типа BoardChessCell*,
+         * и делает член pressed равным true, затем.
+         * После обновления у элементов член pressed
+         * становится равным false. После всех операций vector очищается
+        */
+        for(auto &i:vec){
+            i->pressed = true;
+            i->update();
+        }
+        vector=vec;
+    }
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -43,6 +76,7 @@ public:
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void possibleSteps()Q_DECL_OVERRIDE;
 };
 
 class King : public FigureBase
