@@ -84,6 +84,7 @@ Pawn::Pawn(const bool &color, QGraphicsItem *parent)
     :FigureBase(parent){
     this->color=color;
     name = "Pawn";
+    possibleSteps();
 }
 
 Pawn::~Pawn()

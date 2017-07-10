@@ -33,9 +33,14 @@ HEADERS  += \
     figures.h \
     boardchess.h \
     defines.h \
-    game.h
+    game.h \
+    voce.h
 
 FORMS    +=
+
+INCLUDEPATH += C:\Program Files (x86)\Java\jdk1.7.0_55\include
+
+LIBS += C:\Program Files (x86)\Java\jdk1.7.0_55\jre\bin\client\jvm.dll
 
 RESOURCES += \
     img.qrc
