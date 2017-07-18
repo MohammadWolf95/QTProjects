@@ -73,10 +73,10 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+    void possibleSteps()Q_DECL_OVERRIDE;
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
-    void possibleSteps()Q_DECL_OVERRIDE;
 };
 
 class King : public FigureBase
@@ -87,6 +87,7 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+    void possibleSteps()Q_DECL_OVERRIDE;
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -100,6 +101,7 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+    void possibleSteps()Q_DECL_OVERRIDE;
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };
@@ -112,6 +114,8 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+    void possibleSteps()Q_DECL_OVERRIDE;
+
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };
@@ -124,6 +128,8 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+    void possibleSteps()Q_DECL_OVERRIDE;
+
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 };
@@ -136,6 +142,7 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
+    void possibleSteps()Q_DECL_OVERRIDE;
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -151,9 +158,12 @@ public:
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
     static QString chessMimeType() { return QStringLiteral("figures/x-chess"); }
-    //QVector<FigureBase*> getVectorFig();
+    QVector<FigureBase*> getVectorFig(){
+        return vecFig;
+    }
+
 private:
-    //QVector<FigureBase*> vecFig;
+    QVector<FigureBase*> vecFig;
 };
 
 #endif // FIGURES_H

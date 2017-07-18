@@ -12,7 +12,10 @@ class Game:public QGraphicsItem
   private:
     static Game * p_instance;
     QMap<QPair<char, char>,BoardChessCell*> mapCell;
-    QVector<BoardChessCell*> vector;
+    QVector<BoardChessCell*> vecCell;
+    QVector<FigureBase*> vecFig;
+    Figures*figuresWhite;
+    Figures*figuresBlack;
     // Конструкторы и оператор присваивания недоступны клиентам
     Game(QGraphicsItem *parent=0);
     Game( const Game& );
@@ -22,9 +25,12 @@ class Game:public QGraphicsItem
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0) Q_DECL_OVERRIDE;
     FigureBase *figureMoved;
+    bool queue;
+
   public:
     QByteArray byte;
     QSerialPort serial;
+    FigureBase* savedFig=NULL;   //эта фигура, которая сделала предыдущий ход
 
     static Game * getInstance();
     QMap<QPair<char, char>,BoardChessCell*> &getMapCell(){
@@ -36,13 +42,13 @@ class Game:public QGraphicsItem
          * объектов типа BoardChessCell*,
          * в которых член pressed равен true
         */
-        if(!vector.size())
+        if(!vecCell.size())
             return;
-        for(auto v:vector){
+        for(auto v:vecCell){
             v->pressed = false;
             v->update();
         }
-        vector.clear();
+        vecCell.clear();
     }
 
     void setVector(QVector<BoardChessCell*> vec){
@@ -57,7 +63,7 @@ class Game:public QGraphicsItem
             i->pressed = true;
             i->update();
         }
-        vector=vec;
+        vecCell=vec;
     }
 
     void setFigureMoved(FigureBase *figureMoved){
@@ -66,6 +72,26 @@ class Game:public QGraphicsItem
 
     FigureBase *getFigureMoved(){
         return figureMoved;
+    }
+
+    QVector<FigureBase*> getVector(){
+        return vecFig;
+    }
+
+    void setQueue(FigureBase*figure){
+        if((savedFig)!=NULL&&savedFig!=NULL)
+            savedFig->possibleSteps();
+        if(queue){
+            figuresWhite->setEnabled(false);
+            figuresBlack->setEnabled(true);
+            queue=false;
+        }
+        else{
+            figuresWhite->setEnabled(true);
+            figuresBlack->setEnabled(false);
+            queue=true;
+        }
+        savedFig=figure;
     }
 };
 

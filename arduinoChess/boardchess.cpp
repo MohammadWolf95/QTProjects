@@ -114,7 +114,6 @@ void BoardChessCell::dragMoveEvent(QGraphicsSceneDragDropEvent *event){
 
 void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
     QList<QGraphicsItem*> items = collidingItems();
-
     QPair<char, char> key(idCoordinate.second, idCoordinate.first);
     char coordinateMoves[3] = {idCoordinate.second, idCoordinate.first};
     QByteArray &byte = Game::getInstance()->byte;
@@ -126,7 +125,7 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
         FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
         byte.append((char)figure->getColor()+'0');
         byte.append('\n');
-        delete items.at(0);
+        delete figure;
     }
     else{
         byte.append('\n');
@@ -136,7 +135,8 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
     FigureBase*figure = Game::getInstance()->getFigureMoved();
     figure->setPos(position);
     figure->firstStep=true;
-    figure->possibleSteps();
+    //figure->possibleSteps();
+    Game::getInstance()->setQueue(figure);
 
     Game::getInstance()->serial.write(byte);
 

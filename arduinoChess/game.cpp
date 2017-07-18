@@ -13,11 +13,18 @@ Game::Game(QGraphicsItem *parent)
         for(auto vec2:vec1)
             mapCell.insert(vec2->idCoordinate, vec2);
 
-    Figures*figuresWhite = new Figures(true, board);
+    figuresWhite = new Figures(true, board);
     figuresWhite->setPos(ALIGNMENT_TOP_AND_LEFT_FIGURE,ALIGNMENT_TOP_AND_LEFT_FIGURE);
+    auto vecWhite = figuresWhite->getVectorFig();
+    vecFig+=vecWhite;
 
-    Figures*figuresBlack = new Figures(false, board);
+    figuresBlack = new Figures(false, board);
     figuresBlack->setPos(ALIGNMENT_TOP_AND_LEFT_FIGURE,ALIGNMENT_TOP_AND_LEFT_FIGURE);
+    auto vecBlack = figuresBlack->getVectorFig();
+    vecFig+=vecBlack;
+
+    figuresBlack->setEnabled(true);
+    figuresBlack->setEnabled(false);
 }
 
 QRectF Game::boundingRect() const{
@@ -35,6 +42,7 @@ void Game::paint(QPainter *painter,
 Game * Game::getInstance(){
     if(!Game::p_instance){
         Game::p_instance = new Game();
+        Game::p_instance->queue=true;
         QSerialPort &serialPort = Game::p_instance->serial;
         serialPort.setPortName("COM5");
         serialPort.setBaudRate(QSerialPort::Baud9600);
@@ -43,6 +51,8 @@ Game * Game::getInstance(){
         serialPort.setStopBits(QSerialPort::OneStop);
         serialPort.setFlowControl(QSerialPort::NoFlowControl);
         serialPort.open(QIODevice::ReadWrite);
+        for(auto &i:Game::p_instance->vecFig)
+            i->possibleSteps();
     }
     return Game::p_instance;
 }
