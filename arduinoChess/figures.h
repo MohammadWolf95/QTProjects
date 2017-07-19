@@ -15,17 +15,24 @@ public:
     bool getColor(){
         return color;
     }
-
-    bool firstStep;
-
     virtual void possibleSteps();   //функция для рассчета
                                     //возможных ходов для фигур
+
+    bool firstStep;
+    QList<BoardChessCell*>listCell; //Список всех клеток,
+                                    //фугура которая схватила
+                                    //под прицел клетки
+
+    QPair<char, char> getOldStep(){
+        return oldStep;
+    }
 
 protected:
     QPixmap pixmap;
     bool color;
     QString name;
     QVector<BoardChessCell*> vector;
+    QPair<char, char>oldStep;   //Старый ход фигуры
 
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void writePosInByte(const char&x, const char&y);

@@ -3,7 +3,6 @@
 #include "defines.h"
 #include "game.h"
 
-//BoardChessBase
 BoardChessBase::BoardChessBase(QGraphicsItem*parent)
     :QGraphicsItem(parent)
 {
@@ -125,7 +124,16 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
         FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
         byte.append((char)figure->getColor()+'0');
         byte.append('\n');
+
+        QVector<FigureBase*>*vecDelFig;
+        figure->getColor()?
+                (vecDelFig=&Game::getInstance()->vecWhite):
+                (vecDelFig=&Game::getInstance()->vecBlack);
+
+        int i = vecDelFig->indexOf(figure);
+        vecDelFig->remove(i);
         delete figure;
+
     }
     else{
         byte.append('\n');
@@ -135,8 +143,23 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
     FigureBase*figure = Game::getInstance()->getFigureMoved();
     figure->setPos(position);
     figure->firstStep=true;
-    //figure->possibleSteps();
-    Game::getInstance()->setQueue(figure);
+    QVector<FigureBase*>vecFigures;
+    figure->getColor()?
+                (vecFigures=Game::getInstance()->vecBlack):
+                (vecFigures=Game::getInstance()->vecWhite);
+
+    for(auto&i:listFig)
+        i->possibleSteps();
+
+    auto cellOldStep = Game::getInstance()->
+            getMapCell().find(qMakePair(figure->getOldStep().second,
+                                        figure->getOldStep().first));
+
+    for(auto&i:(cellOldStep.value()->listFig)){
+        i->possibleSteps();
+    }
+
+    Game::getInstance()->setQueue();
 
     Game::getInstance()->serial.write(byte);
 

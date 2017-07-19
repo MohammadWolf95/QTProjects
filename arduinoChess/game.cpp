@@ -15,13 +15,11 @@ Game::Game(QGraphicsItem *parent)
 
     figuresWhite = new Figures(true, board);
     figuresWhite->setPos(ALIGNMENT_TOP_AND_LEFT_FIGURE,ALIGNMENT_TOP_AND_LEFT_FIGURE);
-    auto vecWhite = figuresWhite->getVectorFig();
-    vecFig+=vecWhite;
+    vecWhite = figuresWhite->getVectorFig();
 
     figuresBlack = new Figures(false, board);
     figuresBlack->setPos(ALIGNMENT_TOP_AND_LEFT_FIGURE,ALIGNMENT_TOP_AND_LEFT_FIGURE);
-    auto vecBlack = figuresBlack->getVectorFig();
-    vecFig+=vecBlack;
+    vecBlack = figuresBlack->getVectorFig();
 
     figuresBlack->setEnabled(true);
     figuresBlack->setEnabled(false);
@@ -51,7 +49,9 @@ Game * Game::getInstance(){
         serialPort.setStopBits(QSerialPort::OneStop);
         serialPort.setFlowControl(QSerialPort::NoFlowControl);
         serialPort.open(QIODevice::ReadWrite);
-        for(auto &i:Game::p_instance->vecFig)
+        for(auto &i:Game::p_instance->vecWhite)
+            i->possibleSteps();
+        for(auto &i:Game::p_instance->vecBlack)
             i->possibleSteps();
     }
     return Game::p_instance;

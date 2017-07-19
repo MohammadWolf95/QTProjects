@@ -8,6 +8,7 @@ class BoardChessBase;
 class BoardChess;
 class BoardChessCell;
 class BoardChessFrame;
+class FigureBase;
 
 QT_BEGIN_NAMESPACE
 class QDragEnterEvent;
@@ -47,6 +48,8 @@ public:
     BoardChessCell(const QPair<char, char> id, QGraphicsItem*parent=0);
     QPair<char, char> getId();
     QPair<char, char> idCoordinate;
+    QList<FigureBase*> listFig; //Список для тех фигур,
+                                //клетка которая находится под прицелом
 
     bool pressed;
 private:

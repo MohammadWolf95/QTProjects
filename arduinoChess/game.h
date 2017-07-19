@@ -13,7 +13,7 @@ class Game:public QGraphicsItem
     static Game * p_instance;
     QMap<QPair<char, char>,BoardChessCell*> mapCell;
     QVector<BoardChessCell*> vecCell;
-    QVector<FigureBase*> vecFig;
+
     Figures*figuresWhite;
     Figures*figuresBlack;
     // Конструкторы и оператор присваивания недоступны клиентам
@@ -31,6 +31,8 @@ class Game:public QGraphicsItem
     QByteArray byte;
     QSerialPort serial;
     FigureBase* savedFig=NULL;   //эта фигура, которая сделала предыдущий ход
+    QVector<FigureBase*> vecWhite;
+    QVector<FigureBase*> vecBlack;
 
     static Game * getInstance();
     QMap<QPair<char, char>,BoardChessCell*> &getMapCell(){
@@ -74,13 +76,7 @@ class Game:public QGraphicsItem
         return figureMoved;
     }
 
-    QVector<FigureBase*> getVector(){
-        return vecFig;
-    }
-
-    void setQueue(FigureBase*figure){
-        if((savedFig)!=NULL&&savedFig!=NULL)
-            savedFig->possibleSteps();
+    void setQueue(){
         if(queue){
             figuresWhite->setEnabled(false);
             figuresBlack->setEnabled(true);
@@ -91,7 +87,6 @@ class Game:public QGraphicsItem
             figuresBlack->setEnabled(false);
             queue=true;
         }
-        savedFig=figure;
     }
 };
 
