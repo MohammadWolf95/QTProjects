@@ -1,4 +1,1 @@
-﻿  testConteiner.cpp
-c:\users\user.user-pc\desktop\testconteiner\testconteiner\testconteiner.cpp(10): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  testConteiner.vcxproj -> C:\Users\User.USER-PC\Desktop\testConteiner\Debug\testConteiner.exe
-  testConteiner.vcxproj -> C:\Users\User.USER-PC\Desktop\testConteiner\Debug\testConteiner.pdb (Full PDB)
+﻿
