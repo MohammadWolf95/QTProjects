@@ -103,6 +103,7 @@ void Pawn::paint(QPainter *painter,
 }
 
 void Pawn::possibleSteps(){
+    auto cellD3=Game::getInstance()->getMapCell().find(QPair<char,char>('3','d'));
     for(auto&i:listCell){
         int num = i->listFig.indexOf(this);
         i->listFig.removeAt(num);
@@ -111,7 +112,7 @@ void Pawn::possibleSteps(){
     vector.clear();
     auto game = Game::getInstance();
     QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
-    oldStep=charCoordinate;
+    idCoordinate=charCoordinate;
     char x = charCoordinate.first;
     char y = charCoordinate.second;
 
@@ -150,10 +151,10 @@ void Pawn::possibleSteps(){
                 FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
                 if(figure->getColor()!=color){
                     vector.push_back(cell);
-                    cell->listFig.push_back(this);
-                    listCell.push_back(cell);
                 }
             }
+            cell->listFig.push_back(this);
+            listCell.push_back(cell);
         }
     }
 }

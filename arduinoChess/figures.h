@@ -23,16 +23,12 @@ public:
                                     //фугура которая схватила
                                     //под прицел клетки
 
-    QPair<char, char> getOldStep(){
-        return oldStep;
-    }
-
 protected:
     QPixmap pixmap;
     bool color;
     QString name;
     QVector<BoardChessCell*> vector;
-    QPair<char, char>oldStep;   //Старый ход фигуры
+    QPair<char, char> idCoordinate;
 
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void writePosInByte(const char&x, const char&y);

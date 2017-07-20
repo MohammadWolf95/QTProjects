@@ -64,8 +64,6 @@ private:
     int cellSize() const;
 
     QRect highlightedRect;
-
-    static QPair<char, char> oldPos;
 };
 
 class BoardChessFrame: public BoardChessBase

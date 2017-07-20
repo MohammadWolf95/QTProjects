@@ -112,10 +112,11 @@ void BoardChessCell::dragMoveEvent(QGraphicsSceneDragDropEvent *event){
 }
 
 void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
+    auto game=Game::getInstance();
     QList<QGraphicsItem*> items = collidingItems();
     QPair<char, char> key(idCoordinate.second, idCoordinate.first);
     char coordinateMoves[3] = {idCoordinate.second, idCoordinate.first};
-    QByteArray &byte = Game::getInstance()->byte;
+    QByteArray &byte = game->byte;
     byte.append(coordinateMoves);
 
     //это условие проверяет есть жертва или нет
@@ -127,8 +128,8 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
 
         QVector<FigureBase*>*vecDelFig;
         figure->getColor()?
-                (vecDelFig=&Game::getInstance()->vecWhite):
-                (vecDelFig=&Game::getInstance()->vecBlack);
+                (vecDelFig=&game->vecWhite):
+                (vecDelFig=&game->vecBlack);
 
         int i = vecDelFig->indexOf(figure);
         vecDelFig->remove(i);
@@ -140,33 +141,35 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
     }
 
     QPointF position = BoardChessBase::mapCoordinates.find(key).value();
-    FigureBase*figure = Game::getInstance()->getFigureMoved();
+    FigureBase*figure = game->getFigureMoved();
     figure->setPos(position);
     figure->firstStep=true;
     QVector<FigureBase*>vecFigures;
     figure->getColor()?
-                (vecFigures=Game::getInstance()->vecBlack):
-                (vecFigures=Game::getInstance()->vecWhite);
-    listFig.push_back(figure);
+                (vecFigures=game->vecBlack):
+                (vecFigures=game->vecWhite);
 
     for(auto&i:listFig)
         i->possibleSteps();
 
-    auto cellOldStep = Game::getInstance()->
-            getMapCell().find(qMakePair(figure->getOldStep().second,
-                                        figure->getOldStep().first));
-
-    for(auto&i:(cellOldStep.value()->listFig)){
-        i->possibleSteps();
+    auto cellOldStep = game->
+            getMapCell().find(game->oldStep);
+    if(game->oldStep!=QPair<char,char>()){
+        for(auto&i:(cellOldStep.value()->listFig)){
+            int k = cellOldStep.value()->listFig.size();
+            i->possibleSteps();
+        }
     }
 
-    oldPos=idCoordinate;
+    listFig.push_back(figure);
 
-    Game::getInstance()->setQueue();
+    game->oldStep=idCoordinate;
 
-    Game::getInstance()->serial.write(byte);
+    game->setQueue();
 
-    Game::getInstance()->reDrawing();
+    game->serial.write(byte);
+
+    game->reDrawing();
     highlightedRect = QRect();
     update();
 }

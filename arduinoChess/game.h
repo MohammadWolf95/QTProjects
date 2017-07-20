@@ -33,6 +33,7 @@ class Game:public QGraphicsItem
     FigureBase* savedFig=NULL;   //эта фигура, которая сделала предыдущий ход
     QVector<FigureBase*> vecWhite;
     QVector<FigureBase*> vecBlack;
+    QPair<char, char>oldStep;   //это координаты клетки предыдущего хода, когда фигура встала в эту клетку
 
     static Game * getInstance();
     QMap<QPair<char, char>,BoardChessCell*> &getMapCell(){
