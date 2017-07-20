@@ -147,6 +147,7 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
     figure->getColor()?
                 (vecFigures=Game::getInstance()->vecBlack):
                 (vecFigures=Game::getInstance()->vecWhite);
+    listFig.push_back(figure);
 
     for(auto&i:listFig)
         i->possibleSteps();
@@ -158,6 +159,8 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
     for(auto&i:(cellOldStep.value()->listFig)){
         i->possibleSteps();
     }
+
+    oldPos=idCoordinate;
 
     Game::getInstance()->setQueue();
 
