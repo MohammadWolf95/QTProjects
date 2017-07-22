@@ -149,19 +149,8 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
                 (vecFigures=game->vecBlack):
                 (vecFigures=game->vecWhite);
 
-    for(auto&i:listFig)
-        i->possibleSteps();
-
     auto cellOldStep = game->
             getMapCell().find(game->oldStep);
-    if(game->oldStep!=QPair<char,char>()){
-        for(auto&i:(cellOldStep.value()->listFig)){
-            int k = cellOldStep.value()->listFig.size();
-            i->possibleSteps();
-        }
-    }
-
-    listFig.push_back(figure);
 
     game->oldStep=idCoordinate;
 

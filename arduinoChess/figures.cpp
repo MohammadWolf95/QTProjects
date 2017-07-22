@@ -104,11 +104,7 @@ void Pawn::paint(QPainter *painter,
 
 void Pawn::possibleSteps(){
     auto cellD3=Game::getInstance()->getMapCell().find(QPair<char,char>('3','d'));
-    for(auto&i:listCell){
-        int num = i->listFig.indexOf(this);
-        i->listFig.removeAt(num);
-    }
-    listCell.clear();
+
     vector.clear();
     auto game = Game::getInstance();
     QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
@@ -135,8 +131,6 @@ void Pawn::possibleSteps(){
             break;
         }
         vector.push_back(cell);
-        cell->listFig.push_back(this);
-        listCell.push_back(cell);
     }
 
     //алгоритм нахождения убийств для пешки
@@ -153,8 +147,6 @@ void Pawn::possibleSteps(){
                     vector.push_back(cell);
                 }
             }
-            cell->listFig.push_back(this);
-            listCell.push_back(cell);
         }
     }
 }

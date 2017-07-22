@@ -8,7 +8,8 @@
 
 QT_FORWARD_DECLARE_CLASS(QPixmap)
 
-class FigureBase: public QGraphicsObject{
+class FigureBase:public QGraphicsObject{
+    Q_OBJECT
 public:
     FigureBase(QGraphicsItem*parent=0);
     virtual ~FigureBase();
@@ -19,9 +20,6 @@ public:
                                     //возможных ходов для фигур
 
     bool firstStep;
-    QList<BoardChessCell*>listCell; //Список всех клеток,
-                                    //фугура которая схватила
-                                    //под прицел клетки
 
 protected:
     QPixmap pixmap;
@@ -70,6 +68,7 @@ private:
 
 class Pawn : public FigureBase
 {
+    Q_OBJECT
 public:
     Pawn(const bool &color, QGraphicsItem *parent=0);
     virtual ~Pawn();
@@ -84,6 +83,7 @@ private:
 
 class King : public FigureBase
 {
+    Q_OBJECT
 public:
     King(const bool &color, QGraphicsItem *parent=0);
     virtual ~King();
@@ -98,6 +98,7 @@ private:
 
 class Queen : public FigureBase
 {
+    Q_OBJECT
 public:
     Queen(const bool &color, QGraphicsItem *parent=0);
     virtual ~Queen();
@@ -111,6 +112,7 @@ private:
 
 class Elephant : public FigureBase
 {
+    Q_OBJECT
 public:
     Elephant(const bool &color, QGraphicsItem *parent=0);
     virtual ~Elephant();
@@ -125,6 +127,7 @@ private:
 
 class Horse : public FigureBase
 {
+    Q_OBJECT
 public:
     Horse(const bool &color, QGraphicsItem *parent=0);
     virtual ~Horse();
@@ -139,6 +142,7 @@ private:
 
 class Rook : public FigureBase
 {
+    Q_OBJECT
 public:
     Rook(const bool &color, QGraphicsItem *parent=0);
     virtual ~Rook();
@@ -153,6 +157,7 @@ private:
 
 class Figures: public FigureBase
 {
+    Q_OBJECT
 public:
     Figures(const bool &color, QGraphicsItem *parent=0);
     virtual ~Figures();

@@ -16,7 +16,8 @@ class QDropEvent;
 class QMouseEvent;
 QT_END_NAMESPACE
 
-class BoardChessBase : public QGraphicsItem{
+class BoardChessBase :public QObject, public QGraphicsItem{
+    Q_OBJECT
 public:
     BoardChessBase(QGraphicsItem*parent=0);
     virtual ~BoardChessBase();
@@ -28,6 +29,7 @@ protected:
 
 class BoardChess : public BoardChessBase
 {
+    Q_OBJECT
 public:
     BoardChess(QGraphicsItem*parent=0);
     QRectF boundingRect() const Q_DECL_OVERRIDE;
@@ -42,14 +44,13 @@ private:
     QVector<QVector<BoardChessCell*>> chessCells;
 };
 
-class BoardChessCell: public BoardChessBase
+class BoardChessCell:public BoardChessBase
 {
+    Q_OBJECT
 public:
     BoardChessCell(const QPair<char, char> id, QGraphicsItem*parent=0);
     QPair<char, char> getId();
     QPair<char, char> idCoordinate;
-    QList<FigureBase*> listFig; //Список для тех фигур,
-                                //клетка которая находится под прицелом
 
     bool pressed;
 private:
@@ -68,6 +69,7 @@ private:
 
 class BoardChessFrame: public BoardChessBase
 {
+    Q_OBJECT
 public:
     BoardChessFrame(QGraphicsItem *parent = 0);
 

@@ -33,8 +33,7 @@ HEADERS  += \
     figures.h \
     boardchess.h \
     defines.h \
-    game.h \
-    voce.h
+    game.h
 
 FORMS    +=
 
