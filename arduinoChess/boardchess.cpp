@@ -149,12 +149,11 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
                 (vecFigures=game->vecBlack):
                 (vecFigures=game->vecWhite);
 
-    auto cellOldStep = game->
-            getMapCell().find(game->oldStep);
-
     game->oldStep=idCoordinate;
 
     game->setQueue();
+
+    //emit Game::getInstance()->setQueueGame(figure->getColor());
 
     game->serial.write(byte);
 

@@ -53,6 +53,7 @@ public:
     QPair<char, char> idCoordinate;
 
     bool pressed;
+
 private:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) Q_DECL_OVERRIDE;
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event) Q_DECL_OVERRIDE;

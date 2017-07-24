@@ -10,8 +10,9 @@ Game::Game(QGraphicsItem *parent)
     board->setPos(200,100);
     auto chessCells = board->getChessCells();
     for(auto vec1:chessCells)
-        for(auto vec2:vec1)
+        for(auto vec2:vec1){
             mapCell.insert(vec2->idCoordinate, vec2);
+        }
 
     figuresWhite = new Figures(true, board);
     figuresWhite->setPos(ALIGNMENT_TOP_AND_LEFT_FIGURE,ALIGNMENT_TOP_AND_LEFT_FIGURE);
@@ -49,10 +50,7 @@ Game * Game::getInstance(){
         serialPort.setStopBits(QSerialPort::OneStop);
         serialPort.setFlowControl(QSerialPort::NoFlowControl);
         serialPort.open(QIODevice::ReadWrite);
-        for(auto &i:Game::p_instance->vecWhite)
-            i->possibleSteps();
-        for(auto &i:Game::p_instance->vecBlack)
-            i->possibleSteps();
+
     }
     return Game::p_instance;
 }

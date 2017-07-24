@@ -6,9 +6,11 @@
 #include "figures.h"
 #include "defines.h"
 #include <QtSerialPort/QSerialPort>
+#include <qmutex.h>
 
-class Game:public QGraphicsItem
+class Game:public QObject, public QGraphicsItem
 {
+    Q_OBJECT
   private:
     static Game * p_instance;
     QMap<QPair<char, char>,BoardChessCell*> mapCell;
@@ -81,11 +83,15 @@ class Game:public QGraphicsItem
         if(queue){
             figuresWhite->setEnabled(false);
             figuresBlack->setEnabled(true);
+            for(auto&i:Game::getInstance()->vecBlack)
+                i->possibleSteps();
             queue=false;
         }
         else{
             figuresWhite->setEnabled(true);
             figuresBlack->setEnabled(false);
+            for(auto&i:Game::getInstance()->vecWhite)
+                i->possibleSteps();
             queue=true;
         }
     }

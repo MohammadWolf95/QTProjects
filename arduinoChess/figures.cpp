@@ -103,8 +103,6 @@ void Pawn::paint(QPainter *painter,
 }
 
 void Pawn::possibleSteps(){
-    auto cellD3=Game::getInstance()->getMapCell().find(QPair<char,char>('3','d'));
-
     vector.clear();
     auto game = Game::getInstance();
     QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
@@ -301,6 +299,7 @@ void Queen::paint(QPainter *painter,
 }
 
 void Queen::possibleSteps(){
+    vector.clear();
     auto game = Game::getInstance();
     QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
     char x = charCoordinate.first;
@@ -411,6 +410,7 @@ void Elephant::paint(QPainter *painter,
 }
 
 void Elephant::possibleSteps(){
+    vector.clear();
     auto game = Game::getInstance();
     QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
     char x = charCoordinate.first;
@@ -489,6 +489,7 @@ void Horse::paint(QPainter *painter,
 }
 
 void Horse::possibleSteps(){
+    vector.clear();
     auto game = Game::getInstance();
     QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
     char x = charCoordinate.first;
@@ -497,7 +498,7 @@ void Horse::possibleSteps(){
 
     writePosInByte(x,y);
 
-    //алгоритм для нахождения ходов и убийств для короля
+    //алгоритм для нахождения ходов и убийств для коня
     QVector <QPair<char, char>>vecKillSteps;
     auto mapCells = game->getMapCell();
     vecKillSteps.push_front(qMakePair(y+1,x+2));
@@ -552,6 +553,7 @@ void Rook::paint(QPainter *painter,
 }
 
 void Rook::possibleSteps(){
+    vector.clear();
     auto game = Game::getInstance();
     QPair<char, char> charCoordinate = BoardChessBase::mapCoordinates.key(pos());
     char x = charCoordinate.first;

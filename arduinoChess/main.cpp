@@ -16,6 +16,12 @@ int main(int argc, char *argv[])
 
     scene.addItem(Game::getInstance());
 
+    //первоначальный расчет ходов всех фигур
+    for(auto &i:Game::getInstance()->vecWhite)
+        i->possibleSteps();
+    for(auto &i:Game::getInstance()->vecBlack)
+        i->possibleSteps();
+
     /*
      * символ \n - это стоп символ, после которого ардуино уже читает слово
      * byte - это массив данных, он состоит из 5 или из 6 ячеек

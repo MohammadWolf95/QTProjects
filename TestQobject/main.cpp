@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
     Board b, c;
     QObject::connect(&b, SIGNAL(valueChanged(int)),
-                           &c, SLOT(setValue(int)));
+                           &c, SLOT(setValue(int));
 
     b.setValue(12);
 
