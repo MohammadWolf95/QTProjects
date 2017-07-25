@@ -32,10 +32,14 @@ class Game:public QObject, public QGraphicsItem
   public:
     QByteArray byte;
     QSerialPort serial;
-    FigureBase* savedFig=NULL;   //эта фигура, которая сделала предыдущий ход
+    FigureBase* savedFig=NULL;              //эта фигура, которая сделала
+                                            //предыдущий ход
+
     QVector<FigureBase*> vecWhite;
     QVector<FigureBase*> vecBlack;
-    QPair<char, char>oldStep;   //это координаты клетки предыдущего хода, когда фигура встала в эту клетку
+
+    QVector <QPair<char, char>>stepsShah;   //Эти ходы заняты, т.е. король на
+                                            //на них стоять не может
 
     static Game * getInstance();
     QMap<QPair<char, char>,BoardChessCell*> &getMapCell(){
@@ -80,6 +84,7 @@ class Game:public QObject, public QGraphicsItem
     }
 
     void setQueue(){
+        stepsShah.clear();
         if(queue){
             figuresWhite->setEnabled(false);
             figuresBlack->setEnabled(true);
@@ -94,6 +99,10 @@ class Game:public QObject, public QGraphicsItem
                 i->possibleSteps();
             queue=true;
         }
+    }
+
+    bool getQueue(){
+        return queue;
     }
 };
 

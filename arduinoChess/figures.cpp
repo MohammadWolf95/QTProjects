@@ -59,16 +59,19 @@ void FigureBase::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 bool FigureBase::calcStepsForKQERH(BoardChessCell*cell, QVector<BoardChessCell*>&vec){
     //Эта функция высвечивает возможные ходы и убийства для таких фигур,
     //как King, Queen, Elephant, Rook, Horse
+    auto game = Game::getInstance();
     QList<QGraphicsItem*> items = cell->collidingItems();
     if(!(items.isEmpty())){
         FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
         if(figure->getColor()!=color){
             vec.push_back(cell);
+            game->stepsShah.push_back(cell->idCoordinate);
         }
         return true;
     }
     else{
         vec.push_back(cell);
+        game->stepsShah.push_back(cell->idCoordinate);
         return false;
     }
 }
@@ -129,6 +132,7 @@ void Pawn::possibleSteps(){
             break;
         }
         vector.push_back(cell);
+        game->stepsShah.push_back(cell->idCoordinate);
     }
 
     //алгоритм нахождения убийств для пешки
@@ -143,6 +147,7 @@ void Pawn::possibleSteps(){
                 FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
                 if(figure->getColor()!=color){
                     vector.push_back(cell);
+                    game->stepsShah.push_back(cell->idCoordinate);
                 }
             }
         }
@@ -190,6 +195,10 @@ void King::possibleSteps(){
     char y = charCoordinate.second;
     //QVector<BoardChessCell*>vec;
 
+    game->stepsShah;
+
+    qSort(game->stepsShah);
+
     writePosInByte(x,y);
     this->firstStep;
     //алгоритм для нахождения ходов и убийств для короля
@@ -205,6 +214,8 @@ void King::possibleSteps(){
     vecKillSteps.push_front(qMakePair(y+1,x+1));
     vecKillSteps.push_front(qMakePair(y+1,x-1));
     vecKillSteps.push_front(qMakePair(y+1,x));
+    qSort(vecKillSteps);
+
     for(auto i:vecKillSteps){
         if((i.first>='1' && i.first<='8') &&
             (i.second>='a' && i.second<='h')){
@@ -622,10 +633,6 @@ Figures::Figures(const bool &color, QGraphicsItem *parent)
         yPawn       ='7';
     }
 
-    FigureBase*king=new King(color, this);
-    king->setPos(BoardChessBase::mapCoordinates.find({'e',yGuardian})->toPoint());
-    vecFig.push_back(king);
-
     FigureBase*queen=new Queen(color, this);
     queen->setPos(BoardChessBase::mapCoordinates.find({'d',yGuardian})->toPoint());
     vecFig.push_back(queen);
@@ -652,6 +659,10 @@ Figures::Figures(const bool &color, QGraphicsItem *parent)
         pawn->setPos(BoardChessBase::mapCoordinates.find({xPawn++, yPawn})->toPoint());
         vecFig.push_back(pawn);
     }
+
+    FigureBase*king=new King(color, this);
+    king->setPos(BoardChessBase::mapCoordinates.find({'e',yGuardian})->toPoint());
+    vecFig.push_back(king);
 }
 
 Figures::~Figures(){

@@ -134,7 +134,6 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
         int i = vecDelFig->indexOf(figure);
         vecDelFig->remove(i);
         delete figure;
-
     }
     else{
         byte.append('\n');
@@ -149,11 +148,7 @@ void BoardChessCell::dropEvent(QGraphicsSceneDragDropEvent *event) {
                 (vecFigures=game->vecBlack):
                 (vecFigures=game->vecWhite);
 
-    game->oldStep=idCoordinate;
-
     game->setQueue();
-
-    //emit Game::getInstance()->setQueueGame(figure->getColor());
 
     game->serial.write(byte);
 
