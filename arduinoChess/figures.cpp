@@ -65,13 +65,13 @@ bool FigureBase::calcStepsForKQERH(BoardChessCell*cell, QVector<BoardChessCell*>
         FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
         if(figure->getColor()!=color){
             vec.push_back(cell);
-            game->stepsShah.push_back(cell->idCoordinate);
+            game->mapCellsShah.insert(cell->idCoordinate, cell);
         }
         return true;
     }
     else{
         vec.push_back(cell);
-        game->stepsShah.push_back(cell->idCoordinate);
+        game->mapCellsShah.insert(cell->idCoordinate, cell);
         return false;
     }
 }
@@ -132,7 +132,7 @@ void Pawn::possibleSteps(){
             break;
         }
         vector.push_back(cell);
-        game->stepsShah.push_back(cell->idCoordinate);
+        game->mapCellsShah.insert(cell->idCoordinate, cell);
     }
 
     //алгоритм нахождения убийств для пешки
@@ -147,7 +147,7 @@ void Pawn::possibleSteps(){
                 FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
                 if(figure->getColor()!=color){
                     vector.push_back(cell);
-                    game->stepsShah.push_back(cell->idCoordinate);
+                    game->mapCellsShah.insert(cell->idCoordinate, cell);
                 }
             }
         }
@@ -195,9 +195,7 @@ void King::possibleSteps(){
     char y = charCoordinate.second;
     //QVector<BoardChessCell*>vec;
 
-    game->stepsShah;
-
-    qSort(game->stepsShah);
+    game->mapCellsShah;
 
     writePosInByte(x,y);
     this->firstStep;
@@ -206,15 +204,30 @@ void King::possibleSteps(){
     auto mapCells = game->getMapCell();
 
     //Ходы для короля
-    vecKillSteps.push_front(qMakePair(y-1,x-1));
-    vecKillSteps.push_front(qMakePair(y-1,x+1));
-    vecKillSteps.push_front(qMakePair(y-1,x));
-    vecKillSteps.push_front(qMakePair(y,x+1));
-    vecKillSteps.push_front(qMakePair(y,x-1));
-    vecKillSteps.push_front(qMakePair(y+1,x+1));
-    vecKillSteps.push_front(qMakePair(y+1,x-1));
-    vecKillSteps.push_front(qMakePair(y+1,x));
-    qSort(vecKillSteps);
+    vecKillSteps.push_back(qMakePair(y-1,x-1));
+    vecKillSteps.push_back(qMakePair(y-1,x+1));
+    vecKillSteps.push_back(qMakePair(y-1,x));
+    vecKillSteps.push_back(qMakePair(y,x+1));
+    vecKillSteps.push_back(qMakePair(y,x-1));
+    vecKillSteps.push_back(qMakePair(y+1,x+1));
+    vecKillSteps.push_back(qMakePair(y+1,x-1));
+    vecKillSteps.push_back(qMakePair(y+1,x));
+    //qSort(vecKillSteps);
+    /*for(auto&i:vecKillSteps){
+        vecKillSteps.removeOne(i);
+    }*/
+    QVector<QPair<char, char>>::iterator it_v=vecKillSteps.begin();
+    while(it_v!=vecKillSteps.end()){
+        auto it_m = game->mapCellsShah.find(*it_v);
+        if(it_m!=game->mapCellsShah.end()){
+            it_v=vecKillSteps.erase(it_v);
+        }
+        else{
+            ++it_v;
+        }
+    }
+
+    game->mapCellsShah.clear();
 
     for(auto i:vecKillSteps){
         if((i.first>='1' && i.first<='8') &&
@@ -633,6 +646,10 @@ Figures::Figures(const bool &color, QGraphicsItem *parent)
         yPawn       ='7';
     }
 
+    FigureBase*king=new King(color, this);
+    king->setPos(BoardChessBase::mapCoordinates.find({'e',yGuardian})->toPoint());
+    vecFig.push_back(king);
+
     FigureBase*queen=new Queen(color, this);
     queen->setPos(BoardChessBase::mapCoordinates.find({'d',yGuardian})->toPoint());
     vecFig.push_back(queen);
@@ -659,10 +676,6 @@ Figures::Figures(const bool &color, QGraphicsItem *parent)
         pawn->setPos(BoardChessBase::mapCoordinates.find({xPawn++, yPawn})->toPoint());
         vecFig.push_back(pawn);
     }
-
-    FigureBase*king=new King(color, this);
-    king->setPos(BoardChessBase::mapCoordinates.find({'e',yGuardian})->toPoint());
-    vecFig.push_back(king);
 }
 
 Figures::~Figures(){

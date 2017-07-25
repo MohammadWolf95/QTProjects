@@ -38,7 +38,7 @@ class Game:public QObject, public QGraphicsItem
     QVector<FigureBase*> vecWhite;
     QVector<FigureBase*> vecBlack;
 
-    QVector <QPair<char, char>>stepsShah;   //Эти ходы заняты, т.е. король на
+    QMap<QPair<char, char>, BoardChessCell*>mapCellsShah;   //Эти ходы заняты, т.е. король на
                                             //на них стоять не может
 
     static Game * getInstance();
@@ -84,7 +84,6 @@ class Game:public QObject, public QGraphicsItem
     }
 
     void setQueue(){
-        stepsShah.clear();
         if(queue){
             figuresWhite->setEnabled(false);
             figuresBlack->setEnabled(true);
