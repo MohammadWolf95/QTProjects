@@ -18,6 +18,9 @@ public:
     }
     virtual void possibleSteps();   //функция для рассчета
                                     //возможных ходов для фигур
+    QString getName(){
+        return name;
+    }
 
     bool firstStep;
 

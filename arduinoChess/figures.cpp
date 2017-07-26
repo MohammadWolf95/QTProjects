@@ -193,8 +193,6 @@ void King::possibleSteps(){
     char y = charCoordinate.second;
     //QVector<BoardChessCell*>vec;
 
-    game->mapCellsShah;
-
     writePosInByte(x,y);
     this->firstStep;
     //алгоритм для нахождения ходов и убийств для короля

@@ -24,6 +24,9 @@ Game::Game(QGraphicsItem *parent)
 
     figuresBlack->setEnabled(true);
     figuresBlack->setEnabled(false);
+
+    infoBox = new InformationGame(this);
+    infoBox->setPos(800, 100);
 }
 
 QRectF Game::boundingRect() const{

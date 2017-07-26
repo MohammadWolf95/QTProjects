@@ -7,6 +7,8 @@
 #include "defines.h"
 #include <QtSerialPort/QSerialPort>
 #include <qmutex.h>
+#include "informationgame.h"
+#include "qdebug.h"
 
 class Game:public QObject, public QGraphicsItem
 {
@@ -34,6 +36,7 @@ class Game:public QObject, public QGraphicsItem
     QSerialPort serial;
     FigureBase* savedFig=NULL;              //эта фигура, которая сделала
                                             //предыдущий ход
+    InformationGame *infoBox;
 
     QVector<FigureBase*> vecWhite;
     QVector<FigureBase*> vecBlack;
@@ -84,20 +87,38 @@ class Game:public QObject, public QGraphicsItem
     }
 
     void setQueue(){
+        //Game::getInstance()->mapCellsShah.clear();
+        QVector<FigureBase*> vec;
+        //FigureBase * king;
+
+        if(figureMoved->getName()!="King")
+            figureMoved->possibleSteps();
+
         if(queue){
             figuresWhite->setEnabled(false);
             figuresBlack->setEnabled(true);
-            for(auto&i:Game::getInstance()->vecBlack)
-                i->possibleSteps();
+            vec = vecBlack;
             queue=false;
         }
         else{
             figuresWhite->setEnabled(true);
             figuresBlack->setEnabled(false);
-            for(auto&i:Game::getInstance()->vecWhite)
-                i->possibleSteps();
+            vec = vecWhite;
             queue=true;
         }
+        for(auto&i:vec){
+            if(i!=figureMoved){
+                i->possibleSteps();
+                qDebug()<<i<<getFigureMoved()<<endl;
+            }
+            else{
+                qDebug()<<i<<getFigureMoved()<<endl;
+            }
+            //qDebug()<<i<<Game::getFigureMoved()<<endl;
+        }
+            //else
+                //king = i;
+        //king->possibleSteps();
     }
 
     bool getQueue(){

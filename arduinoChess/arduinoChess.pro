@@ -27,13 +27,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
     figures.cpp \
     boardchess.cpp \
-    game.cpp
+    game.cpp \
+    informationgame.cpp
 
 HEADERS  += \
     figures.h \
     boardchess.h \
     defines.h \
-    game.h
+    game.h \
+    informationgame.h
 
 FORMS    +=
 
