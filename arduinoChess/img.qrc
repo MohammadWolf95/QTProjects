@@ -16,5 +16,6 @@
         <file>img/main/BlackCell.png</file>
         <file>img/main/FrameBoard.png</file>
         <file>img/main/WhiteCell.png</file>
+        <file>img/main/text_box.png</file>
     </qresource>
 </RCC>

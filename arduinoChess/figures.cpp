@@ -61,17 +61,16 @@ bool FigureBase::calcStepsForKQERH(BoardChessCell*cell, QVector<BoardChessCell*>
     //как King, Queen, Elephant, Rook, Horse
     auto game = Game::getInstance();
     QList<QGraphicsItem*> items = cell->collidingItems();
+    game->mapCellsShah.insert(cell->idCoordinate, cell);
     if(!(items.isEmpty())){
         FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
         if(figure->getColor()!=color){
             vec.push_back(cell);
-            game->mapCellsShah.insert(cell->idCoordinate, cell);
         }
         return true;
     }
     else{
         vec.push_back(cell);
-        game->mapCellsShah.insert(cell->idCoordinate, cell);
         return false;
     }
 }
@@ -132,7 +131,6 @@ void Pawn::possibleSteps(){
             break;
         }
         vector.push_back(cell);
-        game->mapCellsShah.insert(cell->idCoordinate, cell);
     }
 
     //алгоритм нахождения убийств для пешки
@@ -143,11 +141,11 @@ void Pawn::possibleSteps(){
                 (xKillDiagonal[i]>='a' && xKillDiagonal[i]<='h')){
             auto cell = mapCells.find(qMakePair(yStep,xKillDiagonal[i])).value();
             QList<QGraphicsItem*> items = cell->collidingItems();
+            game->mapCellsShah.insert(cell->idCoordinate, cell);
             if(!(items.isEmpty())){
                 FigureBase *figure = dynamic_cast<FigureBase *>(items.at(0));
                 if(figure->getColor()!=color){
                     vector.push_back(cell);
-                    game->mapCellsShah.insert(cell->idCoordinate, cell);
                 }
             }
         }
